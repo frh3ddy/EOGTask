@@ -14,7 +14,7 @@ const useGetMetricNames = () => {
     query,
   });
 
-  const metrics = useSelector((state: any) => state.metrics.metricsNames);
+  const metrics = useSelector((state: any) => state.metricsSelector.metricsNames);
 
   const dispatch = useDispatch();
   const { fetching, data } = result;
