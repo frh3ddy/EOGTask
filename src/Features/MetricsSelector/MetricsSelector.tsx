@@ -7,6 +7,10 @@ import useGetMetricNames from '../../hooks/useGetMetricNames';
 import { useDispatch } from 'react-redux';
 import { actions } from '../MetricsSelector/reducer';
 
+type FormatedMetric = {
+  [key: string]: boolean;
+};
+
 const useStyles = makeStyles(() =>
   createStyles({
     root: {
@@ -20,20 +24,20 @@ export default function CheckboxLabels() {
   const dispatch = useDispatch();
   const metrics = useGetMetricNames();
 
-  const [state, setState] = useState<{ [key: string]: boolean }>(() => {
-    return metrics.reduce((result: { [key: string]: boolean }, item: string) => {
+  const [state, setState] = useState<FormatedMetric>(() => {
+    return metrics.reduce((result: FormatedMetric, item: string) => {
       result[item] = false;
       return result;
     }, {});
   });
 
   useEffect(() => {
-    const m = Object.entries(state)
-      .filter(e => e.includes(true))
-      .map(h => h[0]);
+    const metric = Object.entries(state)
+      .filter(entry => entry.includes(true))
+      .map(entryArray => entryArray[0]);
 
-    dispatch(actions.metricsSelected(m));
-  }, [state]);
+    dispatch(actions.metricsSelected(metric));
+  }, [state, dispatch]);
 
   const handleChange = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [name]: event.target.checked });
@@ -42,12 +46,19 @@ export default function CheckboxLabels() {
   return (
     <div className={classes.root}>
       <FormGroup row>
-        {metrics.map((m: string) => {
+        {metrics.map((metric: string) => {
           return (
             <FormControlLabel
-              key={m}
-              control={<Checkbox checked={Boolean(state[m])} onChange={handleChange(m)} value={m} color="primary" />}
-              label={m}
+              key={metric}
+              control={
+                <Checkbox
+                  checked={Boolean(state[metric])}
+                  onChange={handleChange(metric)}
+                  value={metric}
+                  color="primary"
+                />
+              }
+              label={metric}
             />
           );
         })}

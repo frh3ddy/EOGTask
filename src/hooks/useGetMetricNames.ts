@@ -23,7 +23,7 @@ const useGetMetricNames = () => {
     if (!fetching) {
       dispatch(actions.metricsNamesRetreaved(data));
     }
-  }, [fetching]);
+  }, [fetching, dispatch, data]);
 
   return metrics;
 };
