@@ -10,6 +10,7 @@ import Wrapper from './components/Wrapper';
 import UrqlProvider from './components/UrqlProvider';
 import MetricsSelector from './Features/MetricsSelector/MetricsSelector';
 import MetricCards from './Features/MetricCards/MetricCards';
+import MetricsChart from './Features/MetricsChart/MetricsChart';
 
 const store = createStore();
 const theme = createMuiTheme({
@@ -35,6 +36,7 @@ const App = () => (
           <Header />
           <MetricsSelector />
           <MetricCards />
+          <MetricsChart />
           <ToastContainer />
         </Wrapper>
       </UrqlProvider>
