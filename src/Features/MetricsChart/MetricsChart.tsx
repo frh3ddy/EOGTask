@@ -35,7 +35,6 @@ const Chart = () => {
             type="monotone"
             dataKey={metric.name}
             stroke={colors[index]}
-            activeDot={{ r: 8 }}
           />
         ))}
         {metricUnits.map((unit: string, index: number) => (
