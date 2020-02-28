@@ -4,7 +4,7 @@ export type ApiErrorAction = {
   error: string;
 };
 
-export type Measurament = {
+export type Measurement = {
   metric: string;
   at: number;
   value: number;
@@ -12,25 +12,28 @@ export type Measurament = {
 };
 
 type State = {
-  metricsData: { [key: string]: Measurament };
+  metricsData: { [key: string]: Measurement };
+  selectedMetricsData: Measurement[];
+  metricUnits: string[];
 };
 
 const initialState: State = {
   metricsData: {},
+  selectedMetricsData: [],
+  metricUnits: [],
 };
 
 const slice = createSlice({
   name: 'metricCards',
   initialState,
   reducers: {
-    metricsMesurementRecived: (state, action: PayloadAction<Measurament>) => {
+    metricsMesurementRecived: (state, action: PayloadAction<Measurement>) => {
       const { metric } = action.payload;
       state.metricsData = { ...state.metricsData, [metric]: action.payload };
     },
-    metricsMesurementRemoved: (state, action: PayloadAction<string>) => {
-      const metricName = action.payload;
-      const { [metricName]: removed, ...restOfMetrics } = state.metricsData;
-      state.metricsData = restOfMetrics;
+    selectedMetricsDataRecived: (state, action: PayloadAction<Measurement>) => {
+      const { metric } = action.payload;
+      state.metricsData = { ...state.metricsData, [metric]: action.payload };
     },
     apiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
   },

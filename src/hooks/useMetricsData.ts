@@ -4,6 +4,8 @@ import { actions } from '../Features/MetricCards/reducer';
 import { useSubscription } from 'urql';
 import gql from 'graphql-tag';
 
+import { Measurement } from '../Features/MetricCards/reducer';
+
 const subscriptionQuery = gql`
   subscription {
     newMeasurement {
@@ -21,20 +23,18 @@ const useMetricsData = () => {
   });
 
   const selectedMetrics = useSelector((state: any) => state.metricsSelector.selectedMetrics);
-  const metricsData = useSelector((state: any) => state.metricsData.metricsData);
+  const metricsData: Measurement[] = useSelector((state: any) => state.metricsData.metricsData);
 
   const dispatch = useDispatch();
   const { data } = result;
 
   useEffect(() => {
-    if (data && selectedMetrics.includes(data.newMeasurement.metric)) {
+    if (data) {
       dispatch(actions.metricsMesurementRecived(data.newMeasurement));
-    } else if (data) {
-      dispatch(actions.metricsMesurementRemoved(data.newMeasurement.metric));
     }
-  }, [data, selectedMetrics, dispatch]);
+  }, [data, dispatch]);
 
-  return metricsData;
+  return { metricsData, selectedMetrics };
 };
 
 export default useMetricsData;

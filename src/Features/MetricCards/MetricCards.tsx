@@ -5,7 +5,7 @@ import CardContent from '@material-ui/core/CardContent';
 import GridList from '@material-ui/core/GridList';
 import Typography from '@material-ui/core/Typography';
 import useMetricsData from '../../hooks/useMetricsData';
-import { Measurament } from './reducer';
+import { Measurement } from './reducer';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -19,6 +19,7 @@ const useStyles = makeStyles(() =>
     gridList: {
       flexWrap: 'nowrap',
       transform: 'translateZ(0)',
+      minHeight: 184,
     },
     card: {
       minWidth: 250,
@@ -27,9 +28,9 @@ const useStyles = makeStyles(() =>
 );
 
 const SimpleCard = () => {
-  const metricsData = useMetricsData();
+  const { metricsData, selectedMetrics } = useMetricsData();
   const classes = useStyles();
-  const data = Object.values<Measurament>(metricsData);
+  const data = Object.values<Measurement>(metricsData).filter((g: Measurement) => selectedMetrics.includes(g.metric));
 
   return (
     <div className={classes.root}>

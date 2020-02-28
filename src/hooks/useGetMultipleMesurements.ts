@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../Features/MetricsChart/reducer';
 import { useQuery } from 'urql';
 import gql from 'graphql-tag';
-// import { Measurament } from '../Features/MetricCards/reducer';
 
 const query = gql`
   query($metrics: [MeasurementQuery]) {
@@ -25,21 +24,31 @@ const getMinutesAgo = (minutes: number) => {
   return now.getTime();
 };
 
-const fifteenMinutesAgo = getMinutesAgo(15);
-
-const useGetMetricNames = () => {
+const useGetMultipleMesurements = () => {
   const metricsData = useSelector((state: any) => state.metricsData.metricsData);
   const selectedMetrics = useSelector((state: any) => state.metricsSelector.selectedMetrics);
+  const metricsNames = useSelector((state: any) => state.metricsSelector.metricsNames);
   const measurements = useSelector((state: any) => state.metricMeasurement.measurements);
+  const metricsMetadata = useSelector((state: any) => state.metricMeasurement.metricsMetadata);
 
-  const metrics = selectedMetrics.map((metricName: string) => {
-    const before = metricsData[metricName] && metricsData[metricName].at;
-    return {
-      metricName,
-      after: fifteenMinutesAgo,
-      ...(before && { before }),
-    };
-  });
+  const selectedMetricsMetadata = metricsMetadata.filter((l: { [key: string]: string; unit: string }) =>
+    selectedMetrics.includes(l.name),
+  );
+
+  const metricUnits = selectedMetricsMetadata
+    .map((el: { [key: string]: string; unit: string }) => el.unit)
+    .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
+
+  const metrics = useMemo(() => {
+    return metricsNames.map((metricName: string) => {
+      const before = metricsData[metricName] && metricsData[metricName].at;
+      return {
+        metricName,
+        after: getMinutesAgo(15),
+        ...(before && { before }),
+      };
+    });
+  }, [metricsNames, metricsData]);
 
   const [result] = useQuery({
     query,
@@ -50,16 +59,12 @@ const useGetMetricNames = () => {
   const { fetching, data } = result;
 
   useEffect(() => {
-    if (!fetching) {
+    if (!fetching && data) {
       dispatch(actions.mesurementsRecevied(data.getMultipleMeasurements));
     }
+  }, [fetching, dispatch, data]);
 
-    if (metrics.lenght < 1 && measurements.lenght > 0) {
-      dispatch(actions.mesurementsRecevied([]));
-    }
-  }, [fetching, metrics, dispatch, data, measurements]);
-
-  return measurements;
+  return { measurements, selectedMetricsMetadata, metricUnits };
 };
 
-export default useGetMetricNames;
+export default useGetMultipleMesurements;
