@@ -1,68 +1,98 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import useGetMetricNames from '../../hooks/useGetMetricNames';
 import { useDispatch } from 'react-redux';
 import { actions } from '../MetricsSelector/reducer';
 
-type FormatedMetric = {
-  [key: string]: boolean;
-};
+import React, { useEffect, useState } from 'react';
+import { createStyles, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import Chip from '@material-ui/core/Chip';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      margin: 25,
+      display: 'flex',
+      justifyContent: 'flex-end',
+    },
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 300,
+    },
+    chips: {
+      display: 'flex',
+      flexWrap: 'wrap',
+    },
+    chip: {
+      margin: 2,
+    },
+    noLabel: {
+      marginTop: theme.spacing(3),
     },
   }),
 );
 
-export default function CheckboxLabels() {
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+export default function MultipleSelect() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const metrics = useGetMetricNames();
 
-  const [state, setState] = useState<FormatedMetric>(() => {
-    return metrics.reduce((result: FormatedMetric, item: string) => {
-      result[item] = false;
-      return result;
-    }, {});
-  });
+  const [state, setState] = useState<string[]>([]);
 
   useEffect(() => {
-    const metric = Object.entries(state)
-      .filter(entry => entry.includes(true))
-      .map(entryArray => entryArray[0]);
-
-    dispatch(actions.metricsSelected(metric));
+    dispatch(actions.metricsSelected(state));
   }, [state, dispatch]);
 
-  const handleChange = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({ ...state, [name]: event.target.checked });
+  const handleDelete = (metricName: string) => () => {
+    setState(state => state.filter(name => name !== metricName));
+  };
+
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setState(event.target.value as string[]);
   };
 
   return (
     <div className={classes.root}>
-      <FormGroup row>
-        {metrics.map((metric: string) => {
-          return (
-            <FormControlLabel
-              key={metric}
-              control={
-                <Checkbox
-                  checked={Boolean(state[metric])}
-                  onChange={handleChange(metric)}
-                  value={metric}
-                  color="primary"
-                />
-              }
-              label={metric}
-            />
-          );
-        })}
-      </FormGroup>
+      <FormControl className={classes.formControl}>
+        <InputLabel id="metrics">Select metrics</InputLabel>
+        <Select
+          labelId="metrics"
+          id="metrics-chip"
+          multiple
+          value={state}
+          onChange={handleChange}
+          input={<Input id="select-multiple-metrics" />}
+          renderValue={selected => (
+            <div className={classes.chips}>
+              {(selected as string[]).map(value => (
+                <Chip onDelete={handleDelete(value)} key={value} label={value} className={classes.chip} />
+              ))}
+            </div>
+          )}
+          MenuProps={MenuProps}
+        >
+          {metrics
+            .filter((name: string) => !state.includes(name))
+            .map((name: string) => (
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
+            ))}
+        </Select>
+      </FormControl>
     </div>
   );
 }
