@@ -44,7 +44,7 @@ const useGetMultipleMesurements = () => {
       const before = metricsData[metricName] && metricsData[metricName].at;
       return {
         metricName,
-        after: getMinutesAgo(15),
+        after: getMinutesAgo(30),
         ...(before && { before }),
       };
     });

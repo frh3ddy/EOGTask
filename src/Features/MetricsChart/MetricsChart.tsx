@@ -14,8 +14,8 @@ const Chart = () => {
   if (selectedMetricsMetadata.length > 0) {
     return (
       <LineChart
-        width={900}
-        height={300}
+        width={1200}
+        height={500}
         data={[...measurements]}
         margin={{
           top: 5,
@@ -28,11 +28,12 @@ const Chart = () => {
         <XAxis dataKey="at" interval="preserveStartEnd" minTickGap={20} tickFormatter={formatDateToTime} />
         {selectedMetricsMetadata.map((metric: { [key: string]: string; unit: string }, index: number) => (
           <Line
+            isAnimationActive={false}
             key={metric.name}
             dot={false}
             yAxisId={metric.unit}
             name={metric.name}
-            type="monotone"
+            type="linear"
             dataKey={metric.name}
             stroke={colors[index]}
           />
