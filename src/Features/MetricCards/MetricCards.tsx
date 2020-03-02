@@ -19,7 +19,6 @@ const useStyles = makeStyles(() =>
     gridList: {
       flexWrap: 'nowrap',
       transform: 'translateZ(0)',
-      minHeight: 184,
     },
     card: {
       minWidth: 250,
@@ -34,14 +33,14 @@ const SimpleCard = () => {
 
   return (
     <div className={classes.root}>
-      <GridList className={classes.gridList} cols={2.5}>
+      <GridList className={classes.gridList} cols={2.5} cellHeight={120}>
         {data.map(mesurement => (
           <Card className={classes.card} key={mesurement.metric}>
             <CardContent>
               <Typography variant="h5" component="h1">
                 {mesurement.metric}
               </Typography>
-              <Typography variant="h5" component="h1">
+              <Typography variant="h2" component="h1">
                 {mesurement.value}
               </Typography>
             </CardContent>
