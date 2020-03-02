@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { actions } from '../MetricsSelector/reducer';
 
 import React, { useEffect, useState } from 'react';
-import { createStyles, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 300,
     },
     chips: {
+      padding: '0 10px',
       display: 'flex',
       flexWrap: 'wrap',
     },
@@ -45,7 +46,7 @@ const MenuProps = {
   },
 };
 
-export default function MultipleSelect() {
+export default function MetricsSelector() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const metrics = useGetMetricNames();
@@ -56,7 +57,8 @@ export default function MultipleSelect() {
     dispatch(actions.metricsSelected(state));
   }, [state, dispatch]);
 
-  const handleDelete = (metricName: string) => () => {
+  const handleDelete = (metricName: string) => (event: React.ChangeEvent) => {
+    event.stopPropagation();
     setState(state => state.filter(name => name !== metricName));
   };
 
