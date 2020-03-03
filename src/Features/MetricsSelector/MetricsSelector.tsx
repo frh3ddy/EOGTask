@@ -91,14 +91,15 @@ export default function MetricsSelector() {
               {(selected as string[]).map(value => (
                 <Chip
                   onDelete={handleDelete(value)}
-                  onClick={e => e.stopPropagation()}
+                  onMouseDown={e => e.stopPropagation()}
+                  clickable
                   key={value}
                   label={value}
                   className={classes.chip}
                 />
               ))}
               {(selected as string[]).length && (
-                <IconButton onClick={handleClear} aria-label="delete" size="small" className={classes.clear}>
+                <IconButton onMouseDown={handleClear} aria-label="delete" size="small" className={classes.clear}>
                   <ClearIcon />
                 </IconButton>
               )}
