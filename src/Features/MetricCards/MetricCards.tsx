@@ -15,7 +15,7 @@ const useStyles = makeStyles(() =>
       margin: 25,
     },
     card: {
-      minWidth: 250,
+      minWidth: 175,
     },
   }),
 );
@@ -34,12 +34,8 @@ export default function MetricCards() {
           <Grid item xl={2} key={measurement.metric}>
             <Card className={classes.card}>
               <CardContent>
-                <Typography variant="h5" component="h1">
-                  {measurement.metric}
-                </Typography>
-                <Typography variant="h2" component="h1">
-                  {measurement.value}
-                </Typography>
+                <Typography variant="h6">{measurement.metric}</Typography>
+                <Typography variant="h5">{measurement.value}</Typography>
               </CardContent>
             </Card>
           </Grid>
