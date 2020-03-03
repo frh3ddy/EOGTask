@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../Features/MetricCards/reducer';
+import { actions as chartActions } from '../Features/MetricsChart/reducer';
 import { useSubscription } from 'urql';
 import gql from 'graphql-tag';
 
@@ -31,6 +32,7 @@ const useMetricsData = () => {
   useEffect(() => {
     if (data) {
       dispatch(actions.metricsMesurementRecived(data.newMeasurement));
+      dispatch(chartActions.newMeasurementsRecevied(data.newMeasurement));
     }
   }, [data, dispatch]);
 

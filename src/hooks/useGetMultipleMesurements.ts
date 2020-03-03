@@ -25,7 +25,6 @@ const getMinutesAgo = (minutes: number) => {
 };
 
 const useGetMultipleMesurements = () => {
-  const metricsData = useSelector((state: any) => state.metricsData.metricsData);
   const selectedMetrics = useSelector((state: any) => state.metricsSelector.selectedMetrics);
   const metricsNames = useSelector((state: any) => state.metricsSelector.metricsNames);
   const measurements = useSelector((state: any) => state.metricMeasurement.measurements);
@@ -41,18 +40,17 @@ const useGetMultipleMesurements = () => {
 
   const metrics = useMemo(() => {
     return metricsNames.map((metricName: string) => {
-      const before = metricsData[metricName] && metricsData[metricName].at;
       return {
         metricName,
         after: getMinutesAgo(30),
-        ...(before && { before }),
       };
     });
-  }, [metricsNames, metricsData]);
+  }, [metricsNames]);
 
   const [result] = useQuery({
     query,
     variables: { metrics },
+    pause: measurements.length > 0,
   });
 
   const dispatch = useDispatch();
@@ -60,7 +58,7 @@ const useGetMultipleMesurements = () => {
 
   useEffect(() => {
     if (!fetching && data) {
-      dispatch(actions.mesurementsRecevied(data.getMultipleMeasurements));
+      dispatch(actions.measurementsRecevied(data.getMultipleMeasurements));
     }
   }, [fetching, dispatch, data]);
 

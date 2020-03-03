@@ -22,13 +22,30 @@ const slice = createSlice({
   name: 'metricsChart',
   initialState,
   reducers: {
-    mesurementsRecevied: (state, action: PayloadAction<MultipleMeasurements[]>) => {
-      const rawMasurements = action.payload;
-      state.measurements = formatData(rawMasurements);
-      state.metricsMetadata = rawMasurements.map((el: MultipleMeasurements) => ({
+    measurementsRecevied: (state, action: PayloadAction<MultipleMeasurements[]>) => {
+      const rawMeasurements = action.payload;
+      state.measurements = formatData(rawMeasurements);
+      state.metricsMetadata = rawMeasurements.map((el: MultipleMeasurements) => ({
         name: el.metric,
         unit: el.measurements[0].unit,
       }));
+    },
+    newMeasurementsRecevied: (state, action: PayloadAction<Measurement>) => {
+      if (state.measurements.length) {
+        const { at: currentMeasurementTimestamp, metric, value } = action.payload;
+        const auxMeasurements = [...state.measurements];
+        const lastItem = auxMeasurements[auxMeasurements.length - 1];
+
+        if (lastItem.at < currentMeasurementTimestamp) {
+          state.measurements = auxMeasurements.concat({ [metric]: value, at: currentMeasurementTimestamp });
+        } else if (lastItem.at === currentMeasurementTimestamp) {
+          auxMeasurements[auxMeasurements.length - 1] = {
+            ...lastItem,
+            [metric]: value,
+          };
+          state.measurements = auxMeasurements;
+        }
+      }
     },
     waterApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
   },

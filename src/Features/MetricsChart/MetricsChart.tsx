@@ -26,9 +26,10 @@ const Chart = () => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="at" tickFormatter={formatDateToTime} />
+          <XAxis dataKey="at" minTickGap={100} interval="preserveStartEnd" tickFormatter={formatDateToTime} />
           {selectedMetricsMetadata.map((metric: { [key: string]: string; unit: string }, index: number) => (
             <Line
+              connectNulls
               isAnimationActive={false}
               key={metric.name}
               dot={false}
