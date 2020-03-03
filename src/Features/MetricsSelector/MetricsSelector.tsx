@@ -93,6 +93,7 @@ export default function MetricsSelector() {
                 {name}
               </MenuItem>
             ))}
+          {state.length === metrics.length && <MenuItem disabled>No more metrics</MenuItem>}
         </Select>
       </FormControl>
     </div>
