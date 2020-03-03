@@ -1,7 +1,3 @@
-import useGetMetricNames from '../../hooks/useGetMetricNames';
-import { useDispatch } from 'react-redux';
-import { actions } from '../MetricsSelector/reducer';
-
 import React, { useEffect, useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
@@ -10,6 +6,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
+import IconButton from '@material-ui/core/IconButton';
+import useGetMetricNames from '../../hooks/useGetMetricNames';
+import { useDispatch } from 'react-redux';
+import { actions } from '../MetricsSelector/reducer';
+import ClearIcon from '@material-ui/icons/Clear';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,6 +26,9 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '0 10px',
       display: 'flex',
       flexWrap: 'wrap',
+    },
+    clear: {
+      marginLeft: 'auto',
     },
     chip: {
       margin: 2,
@@ -66,6 +70,11 @@ export default function MetricsSelector() {
     setState(event.target.value as string[]);
   };
 
+  const handleClear = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    setState([]);
+  };
+
   return (
     <div className={classes.root}>
       <FormControl className={classes.formControl}>
@@ -80,8 +89,19 @@ export default function MetricsSelector() {
           renderValue={selected => (
             <div className={classes.chips}>
               {(selected as string[]).map(value => (
-                <Chip onDelete={handleDelete(value)} key={value} label={value} className={classes.chip} />
+                <Chip
+                  onDelete={handleDelete(value)}
+                  onClick={e => e.stopPropagation()}
+                  key={value}
+                  label={value}
+                  className={classes.chip}
+                />
               ))}
+              {(selected as string[]).length && (
+                <IconButton onClick={handleClear} aria-label="delete" size="small" className={classes.clear}>
+                  <ClearIcon />
+                </IconButton>
+              )}
             </div>
           )}
           MenuProps={MenuProps}
